@@ -1284,25 +1284,31 @@ function createBoxTexture(label) {
   tailgateMesh.position.set(0, 0.375, 0);
   tailgatePivot.add(tailgateMesh);
 
-  // 3. Wheels
+  // 3. Wheels (Separate Front Steering Wheels and Rear Drive Wheels)
   const wheels = [];
-  function makeWheel(x, y, z) {
+  const frontWheels = [];
+  function makeWheel(x, y, z, isFront) {
+    const steerPivot = new THREE.Group();
+    steerPivot.position.set(x, y, z);
+
     const wGroup = new THREE.Group();
     const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.32, 16), wheelRubberMat);
     tire.rotation.z = Math.PI / 2;
     const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.34, 12), wheelRimMat);
     rim.rotation.z = Math.PI / 2;
     wGroup.add(tire, rim);
-    wGroup.position.set(x, y, z);
-    expTruckGroup.add(wGroup);
+    steerPivot.add(wGroup);
+    expTruckGroup.add(steerPivot);
+
     wheels.push(wGroup);
+    if (isFront) frontWheels.push(steerPivot);
   }
-  makeWheel(-1.18, 0.42, -1.8);
-  makeWheel( 1.18, 0.42, -1.8);
-  makeWheel(-1.18, 0.42,  0.8);
-  makeWheel( 1.18, 0.42,  0.8);
-  makeWheel(-1.18, 0.42,  2.2);
-  makeWheel( 1.18, 0.42,  2.2);
+  makeWheel(-1.18, 0.42, -1.8, true);
+  makeWheel( 1.18, 0.42, -1.8, true);
+  makeWheel(-1.18, 0.42,  0.8, false);
+  makeWheel( 1.18, 0.42,  0.8, false);
+  makeWheel(-1.18, 0.42,  2.2, false);
+  makeWheel( 1.18, 0.42,  2.2, false);
 
   // 4. Cargo Boxes Loaded on the Truck Bed
   const truckCargoBoxes = [];
@@ -1375,6 +1381,10 @@ function createBoxTexture(label) {
 
   /* ---- Animation Loop ---- */
   const clock = new THREE.Clock();
+  let currentTruckZ = -18;
+  let currentTruckX = -3.6;
+  let currentTruckPitch = 0;
+
   function animate() {
     requestAnimationFrame(animate);
     const time = clock.getElapsedTime();
@@ -1415,7 +1425,7 @@ function createBoxTexture(label) {
     }
 
     // =========================================================================
-    // EXPERIENCE TRUCK: Drives Forward with Lights & Unloads at the End
+    // EXPERIENCE TRUCK: Smooth Road Driving Physics, Steering & Unloading
     // =========================================================================
     const expElem = document.getElementById('experience');
     let expProgress = 0;
@@ -1427,28 +1437,70 @@ function createBoxTexture(label) {
       expProgress = THREE.MathUtils.clamp(scrolledPast / totalDist, 0, 1);
     }
 
-    // 1. Truck moves forward down the dock lane as you scroll through experience
-    // Drives from z = -18 down to z = -68 (the terminal unload bay)
-    const truckZ = THREE.MathUtils.lerp(-18, -68, expProgress);
-    expTruckGroup.position.z = truckZ;
+    // Target Z position along warehouse dock road
+    const targetTruckZ = THREE.MathUtils.lerp(-18, -68, expProgress);
+    const prevTruckZ = currentTruckZ;
 
-    // Rotate wheels as truck travels
-    wheels.forEach(w => {
-      w.rotation.x = -truckZ * 2.2;
+    // Smooth mechanical momentum & inertia (truck accelerates & brakes naturally)
+    currentTruckZ += (targetTruckZ - currentTruckZ) * 0.085;
+    const truckSpeed = (currentTruckZ - prevTruckZ); // forward velocity
+    const isMoving = Math.abs(truckSpeed) > 0.0003;
+
+    // Road lane lateral curvature (subtle lane tracking along road)
+    const targetTruckX = -3.6 + Math.sin(expProgress * Math.PI * 1.5) * 0.45;
+    currentTruckX += (targetTruckX - currentTruckX) * 0.085;
+
+    // 1. Road Bump & Suspension Vibration (realistic road texture & chassis bounce)
+    const roadBump = isMoving
+      ? (Math.sin(currentTruckZ * 12) * 0.014 + Math.sin(currentTruckZ * 4.5) * 0.032)
+      : Math.sin(time * 16) * 0.003;
+    expTruckGroup.position.set(currentTruckX, roadBump, currentTruckZ);
+
+    // 2. Chassis Pitch (Braking nose-dip & acceleration lift)
+    const targetPitch = THREE.MathUtils.clamp(-truckSpeed * 2.2, -0.06, 0.06);
+    currentTruckPitch += (targetPitch - currentTruckPitch) * 0.12;
+    expTruckGroup.rotation.x = currentTruckPitch;
+
+    // 3. Chassis Roll & Lane Sway (body roll into turns & over bumps)
+    const bodyRoll = isMoving ? Math.sin(currentTruckZ * 3.8) * 0.016 : 0;
+    expTruckGroup.rotation.z = bodyRoll;
+
+    // 4. Front Wheels Steering into Road Curves
+    const roadCurveSteer = Math.cos(expProgress * Math.PI * 1.5) * 0.18;
+    const dynamicSteer = THREE.MathUtils.clamp(-truckSpeed * 4 + roadCurveSteer, -0.32, 0.32);
+    frontWheels.forEach(fw => {
+      fw.rotation.y = dynamicSteer;
     });
 
-    // 2. UNLOADING LOGIC: When reaching the end of experience (expProgress >= 0.78)
-    // Tailgate lowers and boxes slide backward off the truck bed onto the dock floor!
+    // 5. Wheel Spin with Road Speed
+    wheels.forEach(w => {
+      w.rotation.x -= truckSpeed * 2.6;
+    });
+
+    // 6. Dynamic Headlight vibration with road rumble
+    if (isMoving) {
+      truckHeadlightL.intensity = 1.8 + Math.sin(time * 30) * 0.25;
+      truckHeadlightR.intensity = 1.8 + Math.cos(time * 30) * 0.25;
+    } else {
+      truckHeadlightL.intensity = 1.8;
+      truckHeadlightR.intensity = 1.8;
+    }
+
+    // 7. UNLOADING LOGIC: When reaching the end of experience (expProgress >= 0.78)
     const unloadPhase = THREE.MathUtils.clamp((expProgress - 0.78) / 0.22, 0, 1);
 
-    // Tailgate rotates open into a ramp
+    // Tailgate lowers down into an unloading ramp
     tailgatePivot.rotation.x = THREE.MathUtils.lerp(0, Math.PI / 2.1, unloadPhase);
 
     // Boxes slide backward down the truck bed and unpack onto the dock floor
     truckCargoBoxes.forEach((item, idx) => {
       const boxUnload = THREE.MathUtils.clamp((unloadPhase - idx * 0.1) / 0.55, 0, 1);
+      
+      // When driving on road, cargo has micro road bounce
+      const cargoJitter = (isMoving && boxUnload === 0) ? Math.sin(time * 26 + idx) * 0.012 : 0;
+
       item.mesh.position.z = THREE.MathUtils.lerp(item.initZ, item.unloadZ, boxUnload);
-      item.mesh.position.y = THREE.MathUtils.lerp(item.initY, item.unloadY, boxUnload);
+      item.mesh.position.y = THREE.MathUtils.lerp(item.initY, item.unloadY, boxUnload) + cargoJitter;
       item.mesh.position.x = THREE.MathUtils.lerp(item.initX, item.unloadX, boxUnload);
       
       if (boxUnload > 0 && boxUnload < 0.9) {
