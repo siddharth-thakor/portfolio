@@ -422,7 +422,38 @@
     padding-left: 2rem;
   }
 
-  /* Moving Truck Timeline Indicator */
+  /* Fixed Status Bar above Timeline (Never Overlaps Bullets) */
+  .exp-status-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    width: fit-content;
+    transition: all 0.25s ease;
+  }
+  .exp-status-bar.unloaded {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    background: rgba(16, 185, 129, 0.08);
+  }
+  .status-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+
+  /* Moving Truck Timeline Indicator on line (Icon only, zero text obstruction) */
   .timeline-truck {
     position: absolute;
     left: -7px;
@@ -436,28 +467,8 @@
   }
   .timeline-truck-icon {
     font-size: 1.35rem;
-    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
     transform: scaleX(-1);
-  }
-  .timeline-truck-tag {
-    margin-left: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    background: rgba(13, 16, 21, 0.95);
-    border: 1px solid var(--accent-amber);
-    color: var(--accent-amber);
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    white-space: nowrap;
-    transition: all 0.25s ease;
-  }
-  .timeline-truck-tag.unloaded {
-    border-color: var(--accent-green);
-    color: var(--accent-green);
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
   }
 
   .timeline::before {
@@ -868,11 +879,16 @@
       Hands-on leadership across manufacturing supply chains, retail inventory audits, and civil infrastructure.
     </p>
 
+    <!-- Logistics Manifest Status Bar (Stationary, Clean, Never Overlaps Bullets) -->
+    <div class="exp-status-bar" id="expStatusBar">
+      <span class="status-indicator"></span>
+      <span id="timelineTruckTag">DISPATCHING // G&amp;W CANADA CORP.</span>
+    </div>
+
     <div class="timeline" id="experienceTimeline">
-      <!-- Scroll Delivery Truck Indicator -->
+      <!-- Scroll Delivery Truck Indicator on Timeline Line (Clean icon only) -->
       <div class="timeline-truck" id="timelineTruck">
         <span class="timeline-truck-icon">🚚</span>
-        <span class="timeline-truck-tag" id="timelineTruckTag">DISPATCHING // G&amp;W CANADA</span>
       </div>
       
       <!-- Role 1: G&W -->
@@ -1442,28 +1458,29 @@ function createBoxTexture(label) {
       }
     });
 
-    // 3. Sync UI Timeline Truck Indicator
+    // 3. Sync UI Timeline Truck Indicator and Manifest Status Bar
     const timelineTruck = document.getElementById('timelineTruck');
     const timelineTag = document.getElementById('timelineTruckTag');
+    const expStatusBar = document.getElementById('expStatusBar');
     if (timelineTruck && expElem) {
       const timelineHeight = expElem.querySelector('.timeline').offsetHeight;
       timelineTruck.style.top = (expProgress * (timelineHeight - 24)) + 'px';
 
       if (expProgress >= 0.85) {
-        timelineTag.textContent = "📦 ALL MANIFEST UNLOADED";
-        timelineTag.classList.add('unloaded');
+        if (timelineTag) timelineTag.textContent = "📦 ALL MANIFEST UNLOADED // TERMINAL COMPLETE";
+        if (expStatusBar) expStatusBar.classList.add('unloaded');
       } else if (expProgress > 0.6) {
-        timelineTag.textContent = "DOCKING // SHREYASH";
-        timelineTag.classList.remove('unloaded');
+        if (timelineTag) timelineTag.textContent = "DOCKING // SHREYASH PVT. LTD.";
+        if (expStatusBar) expStatusBar.classList.remove('unloaded');
       } else if (expProgress > 0.35) {
-        timelineTag.textContent = "HAULING // AMICO HuLRT";
-        timelineTag.classList.remove('unloaded');
+        if (timelineTag) timelineTag.textContent = "HAULING // AMICO HuLRT INFRASTRUCTURE";
+        if (expStatusBar) expStatusBar.classList.remove('unloaded');
       } else if (expProgress > 0.15) {
-        timelineTag.textContent = "IN TRANSIT // WIS INTL";
-        timelineTag.classList.remove('unloaded');
+        if (timelineTag) timelineTag.textContent = "IN TRANSIT // WIS INTERNATIONAL";
+        if (expStatusBar) expStatusBar.classList.remove('unloaded');
       } else {
-        timelineTag.textContent = "DISPATCHING // G&W CANADA";
-        timelineTag.classList.remove('unloaded');
+        if (timelineTag) timelineTag.textContent = "DISPATCHING // G&W CANADA CORP.";
+        if (expStatusBar) expStatusBar.classList.remove('unloaded');
       }
     }
 
