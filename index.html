@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Siddharth Thakor — Supply Chain Coordinator</title>
+<meta name="description" content="Portfolio of Siddharth Thakor. Supply Chain Coordinator specializing in inventory control, ERP systems (JD Edwards, SAP), and procurement." />
+
+<!-- Fonts: Modern industrial & clean technical typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-dark: #0d1015;
+    --bg-card: rgba(20, 25, 34, 0.85);
+    --bg-card-hover: rgba(27, 34, 46, 0.95);
+    --border: #232c3b;
+    --border-light: rgba(255, 255, 255, 0.08);
+    
+    /* Industrial Safety & Steel Palette (Clean, No Overdone Glow) */
+    --accent-amber: #f59e0b;
+    --accent-amber-subtle: rgba(245, 158, 11, 0.12);
+    --accent-blue: #38bdf8;
+    --accent-green: #10b981;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg-dark);
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  /* 3D Background Canvas */
+  #scene-container {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #scene-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Soft Vignette */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 30%, transparent 40%, rgba(10, 13, 18, 0.75) 100%);
+  }
+
+  /* Navigation Bar */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 1rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(13, 16, 21, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+    background: var(--accent-amber);
+    color: #0d1015;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .brand-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding-left: 0.5rem;
+    border-left: 1px solid var(--border);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text-primary);
+  }
+
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent-amber);
+    color: #0f1217;
+  }
+
+  .btn-primary:hover {
+    background: #fbbf24;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: #475569;
+  }
+
+  /* Main Layout */
+  .main-wrapper {
+    position: relative;
+    z-index: 2;
+  }
+
+  section {
+    min-height: 100vh;
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 7rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-amber);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .kicker::before {
+    content: "";
+    width: 1.2rem;
+    height: 1px;
+    background: var(--accent-amber);
+  }
+
+  h1.hero-title {
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.2rem;
+  }
+
+  h2.section-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-intro {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 62ch;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  /* Hero Card */
+  .hero-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+
+  .hero-bio {
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .hero-bio strong {
+    color: var(--text-primary);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .stat-card {
+    background: rgba(13, 16, 21, 0.5);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-amber);
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+  }
+
+  .stat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Grid Layouts */
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    line-height: 1.65;
+  }
+
+  .card p strong {
+    color: var(--text-primary);
+  }
+
+  /* Specs Table */
+  .specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .specs-table th, .specs-table td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .specs-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .specs-table td.val {
+    color: var(--text-primary);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  /* Capabilities Cards */
+  .capabilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .cap-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.8rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .cap-card:hover {
+    transform: translateY(-3px);
+    border-color: #3b4759;
+    background: var(--bg-card-hover);
+  }
+
+  .cap-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-amber);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.08em;
+  }
+
+  .cap-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--text-primary);
+  }
+
+  .cap-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+  }
+
+  .pill-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .pill.highlight {
+    color: var(--accent-amber);
+    border-color: rgba(245, 158, 11, 0.3);
+    background: var(--accent-amber-subtle);
+  }
+
+  /* 3D Cargo Inspector Card */
+  .inspector-card {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2.2rem;
+    align-items: center;
+  }
+
+  .canvas-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #090c10;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #modelCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+
+  #modelCanvas:active {
+    cursor: grabbing;
+  }
+
+  .canvas-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    background: rgba(13, 16, 21, 0.85);
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    pointer-events: none;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* Experience Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.8rem;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -2rem;
+    top: 24px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    border: 2px solid var(--accent-amber);
+    transform: translateX(1px);
+  }
+
+  .timeline-head {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .timeline-role {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .timeline-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+  }
+
+  .timeline-company {
+    font-size: 0.95rem;
+    color: var(--accent-amber);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-bullets {
+    list-style: none;
+    color: var(--text-secondary);
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .timeline-bullets li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .timeline-bullets li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent-amber);
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+
+  .timeline-bullets strong {
+    color: var(--text-primary);
+  }
+
+  /* Education Grid */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .edu-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-top: 3px solid #38bdf8;
+  }
+
+  .edu-card h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: var(--text-primary);
+  }
+
+  .edu-card .school {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .edu-card .loc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* Contact Section */
+  .contact-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto;
+  }
+
+  .contact-email {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 600;
+    color: var(--accent-amber);
+    text-decoration: none;
+    display: inline-block;
+    margin: 1.5rem 0;
+    border-bottom: 2px solid rgba(245, 158, 11, 0.4);
+    padding-bottom: 0.3rem;
+    transition: border-color 0.2s;
+  }
+
+  .contact-email:hover {
+    border-color: var(--accent-amber);
+  }
+
+  .contact-meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 2;
+    padding: 2rem clamp(1.5rem, 6vw, 7rem);
+    border-top: 1px solid var(--border);
+    background: #090c10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 850px) {
+    .grid-2col, .inspector-card {
+      grid-template-columns: 1fr;
+    }
+    .nav-links {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 3D Warehouse Canvas -->
+<div id="scene-container"></div>
+<div class="vignette"></div>
+
+<!-- Clean Navigation Bar -->
+<header class="navbar">
+  <a href="#hero" class="nav-brand">
+    <div class="brand-logo">ST</div>
+    <div>
+      <div class="brand-name">Siddharth Thakor</div>
+    </div>
+    <div class="brand-role">Supply Chain Coordinator</div>
+  </a>
+
+  <nav class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Capabilities</a>
+    <a href="#inspector">3D Model</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="Siddharth_Thakor_Resume.pdf" download class="btn btn-primary">
+      Resume PDF
+    </a>
+  </div>
+</header>
+
+<main class="main-wrapper">
+
+  <!-- ================= HERO ================= -->
+  <section id="hero">
+    <div class="hero-panel">
+      <div class="kicker">Mississauga &bull; Brampton &bull; Greater Toronto Area</div>
+      
+      <h1 class="hero-title">
+        Siddharth Thakor
+      </h1>
+
+      <p class="hero-bio">
+        <strong>Supply Chain Coordinator</strong> specializing in demand planning, procurement, 
+        and warehouse inventory control. Proven track record driving <strong>$2M in annual cost savings</strong>, 
+        managing cross-border trade (USMCA), and maintaining <strong>>98% inventory accuracy</strong> with 
+        <strong>JD Edwards</strong> and <strong>SAP ERP</strong>.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary" style="padding:0.75rem 1.4rem;">
+          Get in Touch
+        </a>
+        <a href="#experience" class="btn btn-secondary" style="padding:0.75rem 1.4rem;">
+          View Experience
+        </a>
+        <a href="Siddharth_Thakor_Resume.pdf" target="_blank" class="btn btn-secondary" style="padding:0.75rem 1.4rem;">
+          Open Resume (PDF)
+        </a>
+      </div>
+
+      <!-- Key Metrics Strip -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">$2.0M</div>
+          <div class="stat-label">Annual Sourcing Savings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">&gt;98%</div>
+          <div class="stat-label">Inventory Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">14 Crews</div>
+          <div class="stat-label">Field Crews Supervised</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Task Follow-up &amp; Audit Close</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about">
+    <div class="kicker">01 &mdash; About</div>
+    <h2 class="section-title">Operations-Focused Supply Chain</h2>
+    <p class="section-intro">
+      Translating engineering specifications and fluctuating production schedules into reliable, cost-effective material pipelines.
+    </p>
+
+    <div class="grid-2col">
+      <div class="card">
+        <p>
+          I am a Supply Chain Coordinator with hands-on experience in manufacturing, infrastructure, and inventory reconciliation. 
+          With a <strong>Master of Science in Project Management</strong> from Northeastern University (Toronto) and a 
+          <strong>B.Tech in Mechanical Engineering</strong>, I approach supply chain challenges with analytical rigor.
+        </p>
+        <p>
+          At <strong>G&amp;W Canada Corp.</strong>, I coordinated component availability for new product development (NPD) prototypes 
+          and production launches, negotiating sourcing alternatives that generated <strong>~$2,000,000 USD in annual savings</strong>. 
+          My background also encompasses Vendor-Managed Inventory (VMI), physical cycle counts, and preparing USMCA cross-border trade documents.
+        </p>
+        <div style="margin-top:1.5rem;">
+          <a href="#skills" class="btn btn-secondary">Explore Capabilities &rarr;</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1rem;color:var(--text-primary);">
+          Profile Summary
+        </h3>
+        <table class="specs-table">
+          <tr>
+            <th>Location</th>
+            <td class="val">Brampton / GTA, Ontario</td>
+          </tr>
+          <tr>
+            <th>Work Eligibility</th>
+            <td class="val">Authorized to work in Canada</td>
+          </tr>
+          <tr>
+            <th>Primary ERPs</th>
+            <td class="val">JD Edwards, SAP, MS Project</td>
+          </tr>
+          <tr>
+            <th>Cross-Border</th>
+            <td class="val">USMCA, Commercial Invoices, BOL</td>
+          </tr>
+          <tr>
+            <th>Phone</th>
+            <td class="val">(647) 879-0497</td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td class="val">sidd7thakor@gmail.com</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAPABILITIES ================= -->
+  <section id="skills">
+    <div class="kicker">02 &mdash; Capabilities</div>
+    <h2 class="section-title">Core Systems &amp; Skills</h2>
+    <p class="section-intro">
+      Integrated across ERP workflows, inventory control, vendor procurement, and freight logistics.
+    </p>
+
+    <div class="capabilities-grid">
+      <!-- 1 -->
+      <div class="cap-card">
+        <div class="cap-tag">Systems &amp; Analytics</div>
+        <h3>ERP &amp; Project Tools</h3>
+        <p>Managing inventory master data, purchase orders, work orders, and production schedules.</p>
+        <div class="pill-wrap">
+          <span class="pill highlight">JD Edwards ERP</span>
+          <span class="pill highlight">SAP</span>
+          <span class="pill">MS Project</span>
+          <span class="pill">Jira</span>
+          <span class="pill">Power BI</span>
+          <span class="pill">Excel / Power Query</span>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="cap-card">
+        <div class="cap-tag">Operations</div>
+        <h3>Inventory &amp; Planning</h3>
+        <p>Balancing buffer stocks against carrying costs to minimize obsolescence and avoid stockouts.</p>
+        <div class="pill-wrap">
+          <span class="pill highlight">Cycle Counts (>98%)</span>
+          <span class="pill highlight">Demand Forecasting</span>
+          <span class="pill">VMI Programs</span>
+          <span class="pill">MRP Scheduling</span>
+          <span class="pill">Warehouse Layout</span>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="cap-card">
+        <div class="cap-tag">Purchasing</div>
+        <h3>Procurement &amp; Sourcing</h3>
+        <p>Direct material sourcing, vendor negotiations, and aggressive cost-reduction programs.</p>
+        <div class="pill-wrap">
+          <span class="pill highlight">$2M Cost Savings</span>
+          <span class="pill highlight">MRO Purchasing</span>
+          <span class="pill">RFP / RFQ Review</span>
+          <span class="pill">BOM Takeoffs</span>
+          <span class="pill">Lead-time Compression</span>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="cap-card">
+        <div class="cap-tag">Transportation</div>
+        <h3>Logistics &amp; Trade</h3>
+        <p>Ensuring timely cross-border transport and regulatory documentation compliance.</p>
+        <div class="pill-wrap">
+          <span class="pill highlight">USMCA Certification</span>
+          <span class="pill highlight">Commercial Invoices</span>
+          <span class="pill">Packing Slips &amp; BOL</span>
+          <span class="pill">Heavy Haulers / Fleet</span>
+          <span class="pill">3PL Management</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3D INSPECTOR ================= -->
+  <section id="inspector">
+    <div class="kicker">03 &mdash; Interactive 3D Model</div>
+    <div class="inspector-card">
+      <div class="canvas-box">
+        <canvas id="modelCanvas"></canvas>
+        <div class="canvas-hint">Drag to rotate &bull; Scroll to zoom</div>
+      </div>
+
+      <div>
+        <h3 style="font-size:1.6rem;font-weight:700;margin-bottom:0.8rem;color:var(--text-primary);">
+          Warehouse Pallet &bull; Unit Load
+        </h3>
+        <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:1.5rem;font-size:0.95rem;">
+          Standard industrial wooden pallet loaded with master shipping cartons, ready for multi-tier warehouse racking or outbound transit.
+        </p>
+
+        <table class="specs-table" style="margin-bottom:1.5rem;">
+          <tr>
+            <th>Item Type</th>
+            <td class="val">Standard Euro/GMA Pallet Unit</td>
+          </tr>
+          <tr>
+            <th>Tracking</th>
+            <td class="val">RFID &bull; Barcode Scanned</td>
+          </tr>
+          <tr>
+            <th>Accuracy Target</th>
+            <td class="val">>98% Cycle Count Verified</td>
+          </tr>
+        </table>
+
+        <button class="btn btn-secondary" id="toggleWireframeBtn">
+          Toggle Wireframe
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section id="experience">
+    <div class="kicker">04 &mdash; Work Experience</div>
+    <h2 class="section-title">Professional Experience</h2>
+    <p class="section-intro">
+      Hands-on leadership across manufacturing supply chains, retail inventory audits, and civil infrastructure.
+    </p>
+
+    <div class="timeline">
+      
+      <!-- Role 1: G&W -->
+      <div class="timeline-item">
+        <div class="timeline-head">
+          <h3 class="timeline-role">Supply Chain Coordinator</h3>
+          <span class="timeline-date">Mar 2025 &mdash; Jun 2026</span>
+        </div>
+        <div class="timeline-company">G&amp;W Canada Corp. &bull; Brampton, Ontario</div>
+        <ul class="timeline-bullets">
+          <li>Sourced materials and coordinated component availability for new product development prototypes and production launches, collaborating with engineering, production, quality, and vendors.</li>
+          <li>Identified sourcing alternatives and supported cost-reduction initiatives contributing to approximately <strong>USD $2,000,000 in annual savings</strong>.</li>
+          <li>Planned material requirements using production schedules, inventory levels, demand forecasts, and supplier lead times; maintained records in <strong>JD Edwards ERP</strong>.</li>
+          <li>Procured MRO items (tools, consumables, safety equipment, machinery) by issuing purchase orders and expediting urgent lines.</li>
+          <li>Prepared <strong>USMCA certificates of origin</strong>, commercial invoices, and packing slips for cross-border freight between Canada and the US.</li>
+        </ul>
+      </div>
+
+      <!-- Role 2: WIS -->
+      <div class="timeline-item">
+        <div class="timeline-head">
+          <h3 class="timeline-role">Inventory Control Specialist</h3>
+          <span class="timeline-date">Sept 2024 &mdash; Mar 2025</span>
+        </div>
+        <div class="timeline-company">WIS International &bull; Toronto, Ontario</div>
+        <ul class="timeline-bullets">
+          <li>Managed and tracked inventory across multiple locations, ensuring compliance with standards through physical counts.</li>
+          <li>Coordinated with suppliers to maintain optimum inventory levels for <strong>Vendor-Managed Inventory (VMI)</strong> accounts.</li>
+          <li>Utilized ERP software for inventory forecasting and procurement replenishment based on supply-and-demand trends.</li>
+          <li>Conducted regular cycle counts and inventory audits, maintaining <strong>inventory accuracy above 98%</strong>.</li>
+        </ul>
+      </div>
+
+      <!-- Role 3: Amico -->
+      <div class="timeline-item">
+        <div class="timeline-head">
+          <h3 class="timeline-role">Project Coordinator &bull; Field Coordinator</h3>
+          <span class="timeline-date">Jan 2022 &mdash; Nov 2023</span>
+        </div>
+        <div class="timeline-company">Amico Infrastructure &bull; Mobilinx HuLRT &bull; Mississauga, Ontario</div>
+        <ul class="timeline-bullets">
+          <li>Supervised <strong>14 field crews</strong>, ensuring work was completed safely and materials were staged efficiently on a major transit infrastructure project.</li>
+          <li>Conducted material takeoffs based on drawings and contract documents, ensuring timely delivery within budget limits.</li>
+          <li>Maintained logistics records related to Triaxles and heavy-duty vehicles; tracked daily productivity and resolved bottleneck delays.</li>
+          <li>Assisted with cost-code tracking, invoice processing, and cost-report reviews with jobsite management.</li>
+        </ul>
+      </div>
+
+      <!-- Role 4: Shreyash -->
+      <div class="timeline-item">
+        <div class="timeline-head">
+          <h3 class="timeline-role">Junior Supervisor &mdash; Production &amp; Maintenance</h3>
+          <span class="timeline-date">May 2019 &mdash; Apr 2021</span>
+        </div>
+        <div class="timeline-company">Shreyash Pvt. Ltd.</div>
+        <ul class="timeline-bullets">
+          <li>Supported maintenance planning and asset scheduling using <strong>SAP</strong>, analyzing trends to improve machinery reliability.</li>
+          <li>Produced program and project execution plans, driving a <strong>40% improvement in project alignment</strong> with strategic milestones.</li>
+          <li>Coordinated contractors and equipment upgrades while maintaining safety, GMP, and regulatory compliance.</li>
+          <li>Maintained a <strong>100% follow-up and task completion rate</strong> for all operational action items.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Education -->
+    <div style="margin-top:2.5rem;">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;color:var(--text-primary);">
+        Education
+      </h3>
+      <div class="edu-grid">
+        <div class="edu-card">
+          <h4>Master of Science in Project Management</h4>
+          <div class="school">Northeastern University</div>
+          <div class="loc">Toronto, Ontario, Canada</div>
+        </div>
+        <div class="edu-card">
+          <h4>Bachelor of Technology in Mechanical Engineering</h4>
+          <div class="school">Birla Vishvakarma Mahavidyalaya</div>
+          <div class="loc">Anand, India</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact">
+    <div class="contact-card">
+      <div class="kicker" style="justify-content:center;">05 &mdash; Contact</div>
+      <h2 style="font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:700;margin-bottom:0.8rem;color:var(--text-primary);">
+        Get in Touch
+      </h2>
+      <p style="color:var(--text-secondary);font-size:1.05rem;line-height:1.6;">
+        Actively exploring Supply Chain Coordinator, Logistics Specialist, and Inventory Control positions across the Greater Toronto Area.
+      </p>
+
+      <a href="mailto:sidd7thakor@gmail.com" class="contact-email">
+        sidd7thakor@gmail.com
+      </a>
+
+      <div class="contact-meta">
+        <span>📍 Brampton / GTA, Ontario</span>
+        <span>📞 (647) 879-0497</span>
+        <span>🍁 Authorized to work in Canada</span>
+      </div>
+
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="Siddharth_Thakor_Resume.pdf" download class="btn btn-primary" style="padding:0.75rem 1.5rem;">
+          Download Resume (PDF)
+        </a>
+        <a href="mailto:sidd7thakor@gmail.com" class="btn btn-secondary" style="padding:0.75rem 1.5rem;">
+          Send Email
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>&copy; 2026 Siddharth Thakor &bull; Supply Chain Coordinator</div>
+  <div>Three.js Industrial Warehouse Visualization</div>
+</footer>
+
+<!-- ================= THREE.JS & ORBITCONTROLS ================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+
+<script>
+/* =========================================================================
+   1. PROCEDURAL WAREHOUSE TEXTURES
+   ========================================================================= */
+function createBoxTexture(label) {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const ctx = c.getContext('2d');
+  
+  // Clean cardboard brown
+  ctx.fillStyle = '#805d3b';
+  ctx.fillRect(0, 0, 256, 256);
+  
+  // Shipping label
+  ctx.fillStyle = '#f1f5f9';
+  ctx.fillRect(30, 40, 140, 90);
+  
+  // Barcode lines
+  ctx.fillStyle = '#1e293b';
+  let x = 40;
+  while (x < 160) {
+    const w = Math.random() > 0.5 ? 3 : 1.5;
+    ctx.fillRect(x, 50, w, 35);
+    x += w + 2 + Math.floor(Math.random()*3);
+  }
+
+  // Label text
+  ctx.font = 'bold 9px monospace';
+  ctx.fillText(label || 'ST-LOGISTICS', 40, 100);
+  ctx.fillText('LOT #9482', 40, 115);
+
+  const tex = new THREE.CanvasTexture(c);
+  return tex;
+}
+
+/* =========================================================================
+   2. MAIN WAREHOUSE 3D SCENE (Subtle, Clean Industrial Feel)
+   ========================================================================= */
+(function initWarehouseScene() {
+  const container = document.getElementById('scene-container');
+  const scene = new THREE.Scene();
+  
+  // Soft atmospheric warehouse depth fog
+  scene.fog = new THREE.FogExp2(0x0d1015, 0.018);
+
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.2, 400);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.95;
+  container.appendChild(renderer.domElement);
+
+  /* ---- Warehouse Lighting: Soft, Warm, Realistic ---- */
+  scene.add(new THREE.AmbientLight(0x2d3748, 1.1));
+
+  const ceilingKey = new THREE.DirectionalLight(0xffedd5, 1.2);
+  ceilingKey.position.set(15, 35, 20);
+  scene.add(ceilingKey);
+
+  const fillLight = new THREE.DirectionalLight(0x64748b, 0.6);
+  fillLight.position.set(-15, 20, -20);
+  scene.add(fillLight);
+
+  /* ---- Concrete Floor ---- */
+  const floorGeo = new THREE.PlaneGeometry(140, 220);
+  const floorMat = new THREE.MeshStandardMaterial({
+    color: 0x141820,
+    roughness: 0.55,
+    metalness: 0.1
+  });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  scene.add(floor);
+
+  // Subtle floor grid
+  const grid = new THREE.GridHelper(220, 55, 0x334155, 0x1e293b);
+  grid.position.y = 0.01;
+  grid.material.opacity = 0.3;
+  grid.material.transparent = true;
+  scene.add(grid);
+
+  // Clean yellow safety lines along the aisle
+  const lineMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.6 });
+  const lineGeo = new THREE.PlaneGeometry(0.18, 220);
+  const leftLine = new THREE.Mesh(lineGeo, lineMat);
+  leftLine.rotation.x = -Math.PI / 2;
+  leftLine.position.set(-5, 0.02, 0);
+  scene.add(leftLine);
+
+  const rightLine = leftLine.clone();
+  rightLine.position.set(5, 0.02, 0);
+  scene.add(rightLine);
+
+  /* ---- Warehouse Shelving Towers (Racks) ---- */
+  const rackMat = new THREE.MeshStandardMaterial({ color: 0x253346, roughness: 0.5, metalness: 0.4 });
+  const beamMat = new THREE.MeshStandardMaterial({ color: 0xc25e16, roughness: 0.6 }); // Standard safety orange
+  const palletMat = new THREE.MeshStandardMaterial({ color: 0x9a7b56, roughness: 0.9 });
+  const boxMat = new THREE.MeshStandardMaterial({ map: createBoxTexture(), roughness: 0.7 });
+
+  function buildRackTower(x, zStart, zEnd) {
+    const group = new THREE.Group();
+    const uprightGeo = new THREE.BoxGeometry(0.2, 14, 0.2);
+    const beamGeo = new THREE.BoxGeometry(0.15, 0.25, 4.4);
+
+    for (let z = zStart; z <= zEnd; z += 4.5) {
+      // Upright legs
+      [-0.9, 0.9].forEach(dx => {
+        const leg = new THREE.Mesh(uprightGeo, rackMat);
+        leg.position.set(x + dx, 7, z);
+        group.add(leg);
+      });
+
+      // Shelf beams and cargo
+      [2.2, 5.5, 8.8, 12.0].forEach(y => {
+        const beamF = new THREE.Mesh(beamGeo, beamMat);
+        beamF.position.set(x + 0.9, y, z + 2.2);
+        const beamB = new THREE.Mesh(beamGeo, beamMat);
+        beamB.position.set(x - 0.9, y, z + 2.2);
+        group.add(beamF, beamB);
+
+        // Pallet with boxes
+        if (Math.random() > 0.18) {
+          const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 1.8), palletMat);
+          pallet.position.set(x, y + 0.1, z + 2.2);
+          group.add(pallet);
+
+          // 2 to 3 boxes
+          const boxCount = 2 + Math.floor(Math.random() * 2);
+          for (let b = 0; b < boxCount; b++) {
+            const box = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.65, 0.75), boxMat);
+            box.position.set(
+              x + (Math.random() - 0.5) * 0.3,
+              y + 0.5 + b * 0.68,
+              z + 2.2 + (Math.random() - 0.5) * 0.3
+            );
+            group.add(box);
+          }
+        }
+      });
+    }
+
+    scene.add(group);
+  }
+
+  // Left and right racking aisles
+  buildRackTower(-12, -90, 90);
+  buildRackTower(12, -90, 90);
+
+  /* ---- Moving Guided Vehicle (Clean AGV) ---- */
+  const agvGroup = new THREE.Group();
+  const agvBody = new THREE.Mesh(
+    new THREE.BoxGeometry(2.0, 0.6, 3.2),
+    new THREE.MeshStandardMaterial({ color: 0xe2a014, roughness: 0.4 })
+  );
+  agvBody.position.y = 0.4;
+  const agvCargo = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 1.0, 1.8),
+    boxMat
+  );
+  agvCargo.position.set(0, 1.2, -0.2);
+  agvGroup.add(agvBody, agvCargo);
+  agvGroup.position.set(-5, 0, 20);
+  scene.add(agvGroup);
+
+  /* ---- Overhead Roof Beams ---- */
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x1e2736, roughness: 0.8 });
+  for (let z = -90; z <= 90; z += 25) {
+    const truss = new THREE.Mesh(new THREE.BoxGeometry(32, 0.5, 0.5), roofMat);
+    truss.position.set(0, 16, z);
+    scene.add(truss);
+  }
+
+  /* ---- Smooth Scroll Camera Track ---- */
+  const waypoints = [
+    { x: 0,   y: 5.5, z: 55,  lookY: 3.5, lookZ: 30 },  // Hero
+    { x: 1.5, y: 4.8, z: 25,  lookY: 3.2, lookZ: 5 },   // About
+    { x: -1.5,y: 5.2, z: -5,  lookY: 3.4, lookZ: -25 }, // Skills
+    { x: 1.2, y: 4.5, z: -30, lookY: 3.0, lookZ: -50 }, // Inspector
+    { x: 0,   y: 5.5, z: -60, lookY: 3.5, lookZ: -80 }, // Experience
+    { x: 0,   y: 6.0, z: -80, lookY: 3.2, lookZ: -100} // Contact
+  ];
+
+  let currentScroll = 0;
+  let targetScroll = 0;
+
+  function updateScroll() {
+    const max = document.body.scrollHeight - window.innerHeight;
+    targetScroll = max > 0 ? window.scrollY / max : 0;
+  }
+  window.addEventListener('scroll', updateScroll, { passive: true });
+  updateScroll();
+
+  /* ---- Resize ---- */
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  /* ---- Animation Loop ---- */
+  let agvZ = 20;
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // Smooth scroll interpolation
+    currentScroll += (targetScroll - currentScroll) * 0.06;
+    const progress = currentScroll * (waypoints.length - 1);
+    const idx = Math.floor(progress);
+    const t = progress - idx;
+
+    const p1 = waypoints[idx] || waypoints[waypoints.length - 1];
+    const p2 = waypoints[Math.min(idx + 1, waypoints.length - 1)];
+
+    camera.position.x = THREE.MathUtils.lerp(p1.x, p2.x, t);
+    camera.position.y = THREE.MathUtils.lerp(p1.y, p2.y, t);
+    camera.position.z = THREE.MathUtils.lerp(p1.z, p2.z, t);
+
+    const lookY = THREE.MathUtils.lerp(p1.lookY, p2.lookY, t);
+    const lookZ = THREE.MathUtils.lerp(p1.lookZ, p2.lookZ, t);
+    camera.lookAt(0, lookY, lookZ);
+
+    // Subtle AGV movement
+    agvZ -= 0.04;
+    if (agvZ < -80) agvZ = 60;
+    agvGroup.position.z = agvZ;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+/* =========================================================================
+   3. SECONDARY 3D INSPECTOR (Clean, Interactive Unit Load)
+   ========================================================================= */
+(function initCargoInspector() {
+  const canvas = document.getElementById('modelCanvas');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, canvas.clientWidth / canvas.clientHeight, 0.1, 50);
+  camera.position.set(3.8, 2.8, 3.8);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 1.2;
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const light = new THREE.DirectionalLight(0xffeedd, 1.4);
+  light.position.set(5, 7, 4);
+  scene.add(light);
+
+  const fill = new THREE.DirectionalLight(0x94a3b8, 0.6);
+  fill.position.set(-4, -2, -3);
+  scene.add(fill);
+
+  // Pallet Group
+  const palletGroup = new THREE.Group();
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x9a7b56, roughness: 0.85 });
+  const boxMat = new THREE.MeshStandardMaterial({ map: createBoxTexture("USMCA-OK"), roughness: 0.65 });
+
+  // Deck boards
+  for (let i = -1.0; i <= 1.0; i += 0.5) {
+    const board = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.08, 0.35), woodMat);
+    board.position.set(0, 0.25, i);
+    palletGroup.add(board);
+  }
+  // Bottom stringers
+  for (let x = -0.9; x <= 0.9; x += 0.9) {
+    const stringer = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.2, 2.4), woodMat);
+    stringer.position.set(x, 0.1, 0);
+    palletGroup.add(stringer);
+  }
+
+  // 4 Base boxes
+  [-0.5, 0.5].forEach(x => {
+    [-0.5, 0.5].forEach(z => {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.85, 0.95), boxMat);
+      box.position.set(x, 0.72, z);
+      palletGroup.add(box);
+    });
+  });
+
+  // Top tier master box
+  const topBox = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.75, 1.5), boxMat);
+  topBox.position.set(0, 1.55, 0);
+  palletGroup.add(topBox);
+
+  scene.add(palletGroup);
+
+  // Wireframe toggle
+  let isWireframe = false;
+  const toggleBtn = document.getElementById('toggleWireframeBtn');
+  toggleBtn.addEventListener('click', () => {
+    isWireframe = !isWireframe;
+    palletGroup.traverse(child => {
+      if (child.isMesh && child.material) {
+        child.material.wireframe = isWireframe;
+      }
+    });
+    toggleBtn.textContent = isWireframe ? "Solid Mode" : "Toggle Wireframe";
+  });
+
+  function renderInspector() {
+    requestAnimationFrame(renderInspector);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  renderInspector();
+
+  window.addEventListener('resize', () => {
+    if (canvas.clientWidth && canvas.clientHeight) {
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    }
+  });
+})();
+</script>
+</body>
+</html>
