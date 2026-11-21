@@ -641,6 +641,80 @@
     color: var(--text-muted);
   }
 
+  /* Projects Section */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2.2rem;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(245, 158, 11, 0.4);
+    background: var(--bg-card-hover);
+  }
+
+  .project-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    padding: 0.25rem 0.65rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    width: fit-content;
+  }
+
+  .project-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+
+  .project-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .project-desc {
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-size: 0.95rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .project-specs {
+    border-top: 1px solid var(--border-light);
+    padding-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   /* Contact Section */
   .contact-card {
     background: var(--bg-card);
@@ -728,6 +802,7 @@
     <a href="#about">About</a>
     <a href="#skills">Capabilities</a>
     <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
   </nav>
 
@@ -1078,10 +1153,55 @@
     </div>
   </section>
 
+  <!-- ================= PROJECTS ================= -->
+  <section id="projects">
+    <div class="kicker">04 &mdash; Featured Projects</div>
+    <h2 class="section-title">Engineering &amp; Sourcing Projects</h2>
+    <p class="section-intro">
+      Key technical sourcing, prototype materials planning, and cross-functional engineering launches at G&amp;W Electric.
+    </p>
+
+    <div class="projects-grid">
+      <!-- Project 1: GPLP Mechanism -->
+      <div class="project-card">
+        <div>
+          <div class="project-badge">
+            <span>⚙️ NEW PRODUCT DEVELOPMENT</span>
+          </div>
+          <h3 class="project-title">GPLP Mechanism &mdash; New Design</h3>
+          <div class="project-meta">
+            <span>🏢 G&amp;W Electric</span>
+            <span>&bull;</span>
+            <span>📍 Chicago, Illinois (Remote)</span>
+            <span>&bull;</span>
+            <span>💻 JD Edwards ERP</span>
+          </div>
+          <p class="project-desc">
+            Supported sourcing, materials planning, supplier coordination, and procurement for prototype and production components in close collaboration with engineering teams and specialized suppliers.
+          </p>
+          <ul class="timeline-bullets" style="margin-top:0.75rem;margin-bottom:1.25rem;">
+            <li>Coordinated prototype parts schedules and component availability with mechanical engineering leads to satisfy critical NPD milestone gates.</li>
+            <li>Planned material requirements and tracked vendor purchase orders in <strong>JD Edwards ERP</strong>, mitigating lead-time risks and preventing prototype assembly delays.</li>
+            <li>Maintained direct supplier coordination, evaluating sourcing alternatives, resolving BOM discrepancies, and expediting critical path prototype deliverables.</li>
+          </ul>
+        </div>
+
+        <div class="project-specs">
+          <span class="pill highlight">JD Edwards ERP</span>
+          <span class="pill highlight">Prototype Sourcing</span>
+          <span class="pill highlight">Production Planning</span>
+          <span class="pill">Supplier Coordination</span>
+          <span class="pill">BOM Takeoffs</span>
+          <span class="pill">Cross-Functional Collaboration</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= CONTACT ================= -->
   <section id="contact">
     <div class="contact-card">
-      <div class="kicker" style="justify-content:center;">04 &mdash; Contact</div>
+      <div class="kicker" style="justify-content:center;">05 &mdash; Contact</div>
       <h2 style="font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:700;margin-bottom:0.8rem;color:var(--text-primary);">
         Get in Touch
       </h2>
@@ -1489,6 +1609,7 @@ function createBoxTexture(label) {
     { x: 1.5, y: 4.8, z: 25,  lookY: 3.2, lookZ: 5 },   // About
     { x: -1.5,y: 5.2, z: -5,  lookY: 3.4, lookZ: -25 }, // Capabilities
     { x: -0.2, y: 7.8, z: -45, lookY: 1.4, lookZ: -62 }, // Experience (Elevated top/three-quarter view of truck driving along road!)
+    { x: -1.0, y: 6.2, z: -64, lookY: 2.2, lookZ: -82 }, // Projects (Dock bay & staging racks)
     { x: 0,   y: 6.0, z: -80, lookY: 3.2, lookZ: -100} // Contact
   ];
 
