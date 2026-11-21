@@ -419,7 +419,7 @@
   /* Experience Timeline */
   .timeline {
     position: relative;
-    padding-left: 2rem;
+    padding-left: 3.6rem;
   }
 
   /* Fixed Status Bar above Timeline (Never Overlaps Bullets) */
@@ -453,32 +453,64 @@
     display: inline-block;
   }
 
-  /* Moving Truck Timeline Indicator on line (Icon only, zero text obstruction) */
+  /* Vertical Highway / Road Surface */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    bottom: 8px;
+    width: 32px;
+    background: #0b0f17;
+    border-radius: 16px;
+    box-shadow: 
+      inset 2px 0 0 rgba(255, 255, 255, 0.2),
+      inset -2px 0 0 rgba(255, 255, 255, 0.2),
+      0 0 10px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
+  }
+
+  /* Center Road Dashed Divider */
+  .timeline::after {
+    content: "";
+    position: absolute;
+    left: 23px; /* 8px + 16px (half of 32px) - 1px = 23px */
+    top: 14px;
+    bottom: 18px;
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #f59e0b 0px,
+      #f59e0b 10px,
+      transparent 10px,
+      transparent 22px
+    );
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* Moving Top-View Truck Indicator on Road */
   .timeline-truck {
     position: absolute;
-    left: -7px;
-    top: 24px;
+    left: 12px; /* Centered on 32px road: 8px + 16px - 12px = 12px */
+    top: 32px;
+    width: 24px;
+    height: 58px;
     z-index: 20;
     pointer-events: none;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
+    justify-content: center;
     transition: top 0.08s ease-out;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.85));
   }
-  .timeline-truck-icon {
-    font-size: 1.35rem;
-    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
-    transform: scaleX(-1);
-  }
-
-  .timeline::before {
-    content: "";
-    position: absolute;
-    left: 6px;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
-    background: var(--border);
+  .timeline-truck-topview {
+    width: 24px;
+    height: 58px;
+    display: block;
   }
 
   .timeline-item {
@@ -490,17 +522,31 @@
     padding: 1.8rem;
   }
 
+  /* Roadside waypoint / terminal station node */
   .timeline-item::before {
     content: "";
     position: absolute;
-    left: -2rem;
+    left: -32px;
     top: 24px;
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--bg-dark);
+    background: #0b0f17;
     border: 2px solid var(--accent-amber);
-    transform: translateX(1px);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
+    z-index: 5;
+  }
+
+  /* Road-to-station connecting spur line */
+  .timeline-item::after {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 30px;
+    width: 20px;
+    height: 2px;
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.6), var(--border));
+    z-index: 4;
   }
 
   .timeline-head {
@@ -886,9 +932,67 @@
     </div>
 
     <div class="timeline" id="experienceTimeline">
-      <!-- Scroll Delivery Truck Indicator on Timeline Line (Clean icon only) -->
-      <div class="timeline-truck" id="timelineTruck">
-        <span class="timeline-truck-icon">🚚</span>
+      <!-- Scroll Delivery Truck Indicator on Road (Top-View Freight Truck) -->
+      <div class="timeline-truck" id="timelineTruck" title="Freight Delivery Truck (Top View)">
+        <svg class="timeline-truck-topview" viewBox="0 0 24 58" width="24" height="58" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="roadBeam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fef08a" stop-opacity="0.8" />
+              <stop offset="65%" stop-color="#fef08a" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="#fef08a" stop-opacity="0" />
+            </linearGradient>
+            <filter id="truckGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <!-- Twin Headlight Beams Shining Downward onto Road -->
+          <polygon points="4.5,45 0,58 9,58 6.5,45" fill="url(#roadBeam)" />
+          <polygon points="19.5,45 15,58 24,58 17.5,45" fill="url(#roadBeam)" />
+
+          <!-- Wheels / Tires (Top View) -->
+          <!-- Front Steering Tires -->
+          <rect x="0.5" y="36.5" width="2.8" height="7" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+          <rect x="20.7" y="36.5" width="2.8" height="7" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+          <!-- Rear Dual Tandem Axle Tires -->
+          <rect x="0.5" y="14" width="2.8" height="6.5" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+          <rect x="20.7" y="14" width="2.8" height="6.5" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+          <rect x="0.5" y="22" width="2.8" height="6.5" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+          <rect x="20.7" y="22" width="2.8" height="6.5" rx="1.2" fill="#090d16" stroke="#334155" stroke-width="0.5"/>
+
+          <!-- Cargo Trailer Box (Main Body) -->
+          <rect x="2.5" y="4" width="19" height="30" rx="1.5" fill="#1e293b" stroke="#475569" stroke-width="0.8"/>
+          <!-- Trailer Roof Panels / Corrugations -->
+          <line x1="5" y1="9" x2="19" y2="9" stroke="#334155" stroke-width="0.75" />
+          <line x1="5" y1="14" x2="19" y2="14" stroke="#334155" stroke-width="0.75" />
+          <line x1="5" y1="19" x2="19" y2="19" stroke="#334155" stroke-width="0.75" />
+          <line x1="5" y1="24" x2="19" y2="24" stroke="#334155" stroke-width="0.75" />
+          <line x1="5" y1="29" x2="19" y2="29" stroke="#334155" stroke-width="0.75" />
+          <!-- Amber Logistics Center Stripe -->
+          <rect x="11" y="5" width="2" height="28" fill="#f59e0b" opacity="0.9"/>
+          <!-- Rear Red Tail Lights -->
+          <rect x="3" y="3.5" width="3" height="1.2" rx="0.5" fill="#ef4444" filter="url(#truckGlow)"/>
+          <rect x="18" y="3.5" width="3" height="1.2" rx="0.5" fill="#ef4444" filter="url(#truckGlow)"/>
+
+          <!-- Cab Fairing / Aerodynamic Coupler -->
+          <polygon points="4,33 20,33 19,36 5,36" fill="#0f172a" />
+
+          <!-- Truck Cab (Royal Logistics Blue) -->
+          <path d="M 3.5 36 L 20.5 36 C 21 36 21.5 37 21.5 38 L 21 43 C 21 46 19.5 47.5 16 47.5 L 8 47.5 C 4.5 47.5 3 46 3 43 L 2.5 38 C 2.5 37 3 36 3.5 36 Z" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.8"/>
+
+          <!-- Side Mirrors -->
+          <rect x="0" y="38" width="2" height="3" rx="0.5" fill="#1e293b" />
+          <rect x="22" y="38" width="2" height="3" rx="0.5" fill="#1e293b" />
+
+          <!-- Windshield (Dark Tinted Glass with Cyan Gleam) -->
+          <path d="M 5 41.5 L 19 41.5 C 18.5 44.5 17 45.2 12 45.2 C 7 45.2 5.5 44.5 5 41.5 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="0.5"/>
+          <line x1="7" y1="42.5" x2="11" y2="44" stroke="#bae6fd" stroke-width="0.75" stroke-linecap="round" opacity="0.85"/>
+
+          <!-- Glowing Headlights (LEDs) -->
+          <circle cx="5" cy="45.5" r="1.3" fill="#fef08a" filter="url(#truckGlow)"/>
+          <circle cx="19" cy="45.5" r="1.3" fill="#fef08a" filter="url(#truckGlow)"/>
+        </svg>
       </div>
       
       <!-- Role 1: G&W -->
@@ -1109,6 +1213,32 @@ function createBoxTexture(label) {
   const rightLine = leftLine.clone();
   rightLine.position.set(5, 0.02, 0);
   scene.add(rightLine);
+
+  /* ---- Dedicated Delivery Highway Road Lane for Experience Truck ---- */
+  const roadMat = new THREE.MeshStandardMaterial({ color: 0x090d15, roughness: 0.85 });
+  const roadPlane = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 110), roadMat);
+  roadPlane.rotation.x = -Math.PI / 2;
+  roadPlane.position.set(-3.6, 0.015, -45);
+  scene.add(roadPlane);
+
+  // White road borders / lane edges
+  const roadCurbMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.45 });
+  const curbGeo = new THREE.PlaneGeometry(0.14, 110);
+  const leftCurb = new THREE.Mesh(curbGeo, roadCurbMat);
+  leftCurb.rotation.x = -Math.PI / 2;
+  leftCurb.position.set(-3.6 - 2.55, 0.02, -45);
+  const rightCurb = leftCurb.clone();
+  rightCurb.position.set(-3.6 + 2.55, 0.02, -45);
+  scene.add(leftCurb, rightCurb);
+
+  // Dashed yellow center road markings
+  const dashMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 });
+  for (let dz = 8; dz >= -96; dz -= 4.2) {
+    const dash = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 2.2), dashMat);
+    dash.rotation.x = -Math.PI / 2;
+    dash.position.set(-3.6, 0.025, dz);
+    scene.add(dash);
+  }
 
   /* ---- Warehouse Shelving Towers (Racks) ---- */
   const rackMat = new THREE.MeshStandardMaterial({ color: 0x253346, roughness: 0.5, metalness: 0.4 });
@@ -1358,7 +1488,7 @@ function createBoxTexture(label) {
     { x: 0,   y: 5.5, z: 55,  lookY: 3.5, lookZ: 30 },  // Hero
     { x: 1.5, y: 4.8, z: 25,  lookY: 3.2, lookZ: 5 },   // About
     { x: -1.5,y: 5.2, z: -5,  lookY: 3.4, lookZ: -25 }, // Capabilities
-    { x: 0.6, y: 5.2, z: -46, lookY: 2.2, lookZ: -68 }, // Experience (Clear view of truck & unloading bay!)
+    { x: -0.2, y: 7.8, z: -45, lookY: 1.4, lookZ: -62 }, // Experience (Elevated top/three-quarter view of truck driving along road!)
     { x: 0,   y: 6.0, z: -80, lookY: 3.2, lookZ: -100} // Contact
   ];
 
@@ -1515,8 +1645,11 @@ function createBoxTexture(label) {
     const timelineTag = document.getElementById('timelineTruckTag');
     const expStatusBar = document.getElementById('expStatusBar');
     if (timelineTruck && expElem) {
-      const timelineHeight = expElem.querySelector('.timeline').offsetHeight;
-      timelineTruck.style.top = (expProgress * (timelineHeight - 24)) + 'px';
+      const timelineElem = expElem.querySelector('.timeline');
+      const timelineHeight = timelineElem ? timelineElem.offsetHeight : 800;
+      const startY = 32;
+      const endY = timelineHeight - 38;
+      timelineTruck.style.top = (startY + expProgress * (endY - startY)) + 'px';
 
       if (expProgress >= 0.85) {
         if (timelineTag) timelineTag.textContent = "📦 ALL MANIFEST UNLOADED // TERMINAL COMPLETE";
